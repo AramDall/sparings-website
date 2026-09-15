@@ -73,6 +73,10 @@ a:hover {
   color: var(--text-primary);
 }
 
+.nav-brand:hover {
+  text-decoration: none;
+}
+
 .nav-brand img {
   width: 30px;
   height: 30px;
@@ -96,7 +100,11 @@ a:hover {
 /* Hero */
 .hero {
   text-align: center;
-  padding: 72px 20px 56px;
+  /* Bottom padding kept modest on purpose — section.block already adds its
+     own 46px top padding right after, so the two stack into the visible gap
+     before the next heading. Don't raise this much without accounting for
+     that combined total. */
+  padding: 72px 20px 40px;
 }
 
 .hero img.logo {
