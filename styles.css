@@ -131,6 +131,32 @@ a:hover {
   margin: 0 auto 30px;
 }
 
+/* Hero layout — two columns on wide screens (copy left, floating phone
+   right); privacy.html/terms.html's plain text-only .hero (no .hero-inner)
+   is untouched by any of this and keeps the simple centered rules above. */
+.hero-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+}
+
+.hero-text {
+  flex: 1 1 420px;
+  text-align: left;
+}
+
+.hero-text .tagline {
+  margin: 0 0 30px;
+}
+
+.hero-text .pill-row,
+.hero-text .download-row {
+  justify-content: flex-start;
+}
+
 .pill-row {
   display: flex;
   justify-content: center;
@@ -192,33 +218,85 @@ a:hover {
   margin-inline-start: 4px;
 }
 
-/* Hero showcase image — a single large, glowing screenshot right under the
-   store buttons, so a first-time visitor sees the actual app immediately. */
-.hero-showcase {
+/* Hero visual — a floating "phone" (pure CSS frame, no external art) tilted
+   slightly, with an asymmetric ambient glow behind it. Right column on wide
+   screens; see the @media block below for the stacked/centered phone-only
+   mobile version. */
+.hero-visual {
   position: relative;
-  display: inline-block;
-  margin-top: 40px;
+  flex: 0 0 auto;
+  width: 320px;
+  display: flex;
+  justify-content: center;
 }
 
-.hero-showcase::before {
-  content: "";
+.hero-glow {
   position: absolute;
-  inset: -40px;
-  background: radial-gradient(circle, rgba(216, 178, 107, 0.35) 0%, rgba(63, 168, 118, 0.22) 45%, transparent 72%);
-  filter: blur(24px);
+  width: 500px;
+  height: 500px;
+  top: -70px;
+  left: -100px;
+  background: radial-gradient(circle at 42% 38%, var(--gold) 0%, var(--green) 48%, transparent 72%);
+  filter: blur(80px);
+  opacity: 0.4;
   z-index: 0;
+  pointer-events: none;
 }
 
-.hero-showcase img {
+.hero-phone {
   position: relative;
   z-index: 1;
-  display: block;
-  width: 320px;
-  max-width: 78vw;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  width: 280px;
+  border-radius: 36px;
+  /* --card mixed with --bg — a shade darker than the card surface, reading
+     as a physical device bezel rather than another UI card. */
+  border: 9px solid #0e2238;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 16px 32px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  transform: rotate(-6deg);
   background: var(--card);
-  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.45);
+}
+
+.hero-phone img {
+  display: block;
+  width: 100%;
+  border-radius: 28px;
+}
+
+@media (max-width: 900px) {
+  .hero-inner {
+    flex-direction: column;
+    gap: 44px;
+  }
+
+  .hero-text {
+    text-align: center;
+  }
+
+  .hero-text .tagline {
+    margin: 0 auto 30px;
+  }
+
+  .hero-text .pill-row,
+  .hero-text .download-row {
+    justify-content: center;
+  }
+
+  .hero-visual {
+    width: 100%;
+  }
+
+  .hero-phone {
+    width: 240px;
+  }
+
+  .hero-glow {
+    width: 380px;
+    height: 380px;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-58%);
+  }
 }
 
 /* Sections */
