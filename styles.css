@@ -192,6 +192,35 @@ a:hover {
   margin-inline-start: 4px;
 }
 
+/* Hero showcase image — a single large, glowing screenshot right under the
+   store buttons, so a first-time visitor sees the actual app immediately. */
+.hero-showcase {
+  position: relative;
+  display: inline-block;
+  margin-top: 40px;
+}
+
+.hero-showcase::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle, rgba(216, 178, 107, 0.35) 0%, rgba(63, 168, 118, 0.22) 45%, transparent 72%);
+  filter: blur(24px);
+  z-index: 0;
+}
+
+.hero-showcase img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 320px;
+  max-width: 78vw;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.45);
+}
+
 /* Sections */
 section.block {
   padding: 46px 20px;
