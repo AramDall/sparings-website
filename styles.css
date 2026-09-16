@@ -1,7 +1,9 @@
 /* Sparings — shared site styles */
 
 :root {
-  --bg: #091A2C;
+  /* Deepened ~36% in lightness from the original #091A2C, same hue/tone
+     (a dark navy-teal), so gold/green accents read with more contrast. */
+  --bg: #06101C;
   --bg-alt: #0F2338;
   --card: #122A44;
   --border: rgba(255, 255, 255, 0.08);
@@ -49,7 +51,9 @@ a:hover {
 /* Nav */
 .nav {
   border-bottom: 1px solid var(--border);
-  background: rgba(9, 26, 44, 0.85);
+  /* rgb(6, 16, 28) = --bg — kept as a literal (not var()) so the alpha
+     can be applied; update alongside --bg if that value ever changes. */
+  background: rgba(6, 16, 28, 0.85);
   backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
@@ -97,6 +101,58 @@ a:hover {
   text-decoration: none;
 }
 
+/* Nav — mobile hamburger toggle, hidden on desktop */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+}
+
+/* Same breakpoint as .hero-inner's mobile layout below */
+@media (max-width: 900px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links a {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+  }
+}
+
 /* Hero */
 .hero {
   text-align: center;
@@ -116,7 +172,7 @@ a:hover {
 
 .hero h1 {
   font-size: 2.4rem;
-  margin: 0 0 12px;
+  margin: 1 0 12px;
   letter-spacing: -0.02em;
 }
 
@@ -129,6 +185,7 @@ a:hover {
   font-size: 1.1rem;
   max-width: 520px;
   margin: 0 auto 30px;
+  margin-left: -1px;
 }
 
 /* Hero layout — two columns on wide screens (copy left, floating phone
@@ -155,6 +212,7 @@ a:hover {
 .hero-text .pill-row,
 .hero-text .download-row {
   justify-content: flex-start;
+  margin-left: -4px;
 }
 
 .pill-row {
@@ -179,7 +237,7 @@ a:hover {
   margin-inline-end: 6px;
 }
 
-/* Download buttons */
+/* Download buttons — official store badge artwork */
 .download-row {
   display: flex;
   justify-content: center;
@@ -187,35 +245,33 @@ a:hover {
   flex-wrap: wrap;
 }
 
-.btn-store {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--text-muted);
-  padding: 12px 22px;
-  border-radius: var(--radius);
-  font-size: 0.95rem;
-  font-weight: 600;
+.store-badge-wrap {
+  display: inline-block;
   cursor: not-allowed;
   user-select: none;
 }
 
-.btn-store .store-icon {
-  font-size: 1.2rem;
+.store-badge-wrap .store-badge {
+  /* Same explicit height on both badges, width left to follow each
+     logo's own natural aspect ratio. Both source files are now trimmed
+     to a tight bounding box around their visible black badge shape (no
+     transparent canvas padding), so the rendered img box IS the visible
+     badge — no hidden margin to throw off the match. */
+  display: block;
+  height: 48px;
+  width: auto;
 }
 
-.btn-store .soon {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--gold);
-  border: 1px solid var(--gold);
-  border-radius: 999px;
-  padding: 2px 8px;
-  margin-inline-start: 4px;
+@media (max-width: 900px) {
+  .download-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .store-badge-wrap .store-badge {
+    height: 64px;
+    width: auto;
+  }
 }
 
 /* Hero visual — a floating "phone" (pure CSS frame, no external art) tilted
@@ -284,16 +340,19 @@ a:hover {
 
   .hero-visual {
     width: 100%;
+    /* Phone appears first on mobile — DOM order (heading first) is
+       untouched for accessibility/SEO; this is purely a visual reorder. */
+    order: -1;
   }
 
   .hero-phone {
-    width: 240px;
+    width: 200px;
   }
 
   .hero-glow {
-    width: 380px;
-    height: 380px;
-    top: -30px;
+    width: 320px;
+    height: 320px;
+    top: -25px;
     left: 50%;
     transform: translateX(-58%);
   }
@@ -322,16 +381,83 @@ section.block .wrap {
   max-width: 520px;
 }
 
-/* Feature grid */
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* Horizontal scroll-snap sliders — shared track/card mechanics for
+   "Why Sparings" and "See it in action" at ALL widths, so the two read as
+   one consistent pattern. Each section's own card content (icon/text vs.
+   image/label) is styled separately below. */
+.feature-grid,
+.screenshot-grid {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
   gap: 16px;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-@media (max-width: 640px) {
-  .feature-grid {
-    grid-template-columns: 1fr;
+.feature-grid::-webkit-scrollbar,
+.screenshot-grid::-webkit-scrollbar {
+  display: none; /* Chrome/Safari — visually hidden, scrolling stays functional */
+}
+
+.feature-card,
+.screenshot-card {
+  flex: 0 0 auto;
+  width: min(78vw, 300px);
+  scroll-snap-align: start;
+}
+
+/* Desktop prev/next slider arrows (injected by JS around each track).
+   Mobile keeps pure touch-swipe — hidden below the site's existing 900px
+   breakpoint. */
+.slider-wrap {
+  position: relative;
+}
+
+.slider-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  /* var(--card) (#122A44) at reduced opacity — a translucent dark disc
+     that reads consistently over any card/screenshot underneath it. */
+  background: rgba(18, 42, 68, 0.85);
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
+}
+
+.slider-arrow:hover {
+  border-color: var(--gold);
+}
+
+.slider-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.slider-arrow-prev {
+  left: -8px;
+}
+
+.slider-arrow-next {
+  right: -8px;
+}
+
+@media (max-width: 900px) {
+  .slider-arrow {
+    display: none;
   }
 }
 
@@ -359,28 +485,8 @@ section.block .wrap {
   font-size: 0.92rem;
 }
 
-/* Screenshot gallery ("See it in action") */
-.screenshot-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px 18px;
-}
-
-@media (max-width: 640px) {
-  .screenshot-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px 12px;
-  }
-}
-
-@media (max-width: 400px) {
-  .screenshot-grid {
-    grid-template-columns: 1fr;
-    max-width: 260px;
-    margin: 0 auto;
-  }
-}
-
+/* Screenshot gallery ("See it in action") — track/card sizing shared with
+   .feature-grid above; only this section's own content layout lives here. */
 .screenshot-card {
   display: flex;
   flex-direction: column;

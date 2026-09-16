@@ -16,7 +16,12 @@
       <img src="assets/logo.png" alt="Sparings logo" />
       Sparings
     </a>
-    <div class="nav-links">
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
       <a href="index.html">Home</a>
       <a href="#help">Help</a>
       <a href="privacy.html">Privacy</a>
@@ -29,7 +34,6 @@
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <img class="logo" src="assets/logo.png" alt="Sparings app icon" />
       <h1>Spar<span class="accent">ings</span></h1>
       <p class="tagline">
         A simple, private way to track your money — manage expenses, accounts and budgets
@@ -43,11 +47,11 @@
       </div>
 
       <div class="download-row">
-        <span class="btn-store" title="Coming soon">
-          <span class="store-icon">▶</span> Get it on Google Play <span class="soon">Soon</span>
+        <span class="store-badge-wrap" title="Coming soon">
+          <img class="store-badge" src="assets/google-play-badge.png" alt="Get it on Google Play" />
         </span>
-        <span class="btn-store" title="Coming soon">
-          <span class="store-icon"></span> Download on the App Store <span class="soon">Soon</span>
+        <span class="store-badge-wrap" title="Coming soon">
+          <img class="store-badge" src="assets/app-store-badge.svg" alt="Download on the App Store" />
         </span>
       </div>
     </div>
@@ -221,6 +225,88 @@
     <p>© 2026 Sparings. All rights reserved.</p>
   </div>
 </footer>
+
+<script>
+  (function () {
+    var navToggle = document.getElementById("navToggle");
+    var navLinks = document.getElementById("navLinks");
+    if (!navToggle || !navLinks) return;
+
+    function closeMenu() {
+      navLinks.classList.remove("open");
+      navToggle.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMenu() {
+      var isOpen = navLinks.classList.toggle("open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    navToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    navLinks.addEventListener("click", function (e) {
+      if (e.target.tagName === "A") closeMenu();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+        closeMenu();
+      }
+    });
+  })();
+
+  // Desktop prev/next arrows for the "Why Sparings" and "See it in action"
+  // sliders — mobile keeps pure touch-swipe (arrows are hidden by CSS
+  // below the site's existing 900px breakpoint).
+  (function () {
+    var tracks = document.querySelectorAll(".feature-grid, .screenshot-grid");
+
+    tracks.forEach(function (track) {
+      var wrap = document.createElement("div");
+      wrap.className = "slider-wrap";
+      track.parentNode.insertBefore(wrap, track);
+      wrap.appendChild(track);
+
+      var prevBtn = document.createElement("button");
+      prevBtn.type = "button";
+      prevBtn.className = "slider-arrow slider-arrow-prev";
+      prevBtn.setAttribute("aria-label", "Scroll left");
+      prevBtn.innerHTML = "&#8249;";
+
+      var nextBtn = document.createElement("button");
+      nextBtn.type = "button";
+      nextBtn.className = "slider-arrow slider-arrow-next";
+      nextBtn.setAttribute("aria-label", "Scroll right");
+      nextBtn.innerHTML = "&#8250;";
+
+      wrap.appendChild(prevBtn);
+      wrap.appendChild(nextBtn);
+
+      function step(dir) {
+        var card = track.querySelector(".feature-card, .screenshot-card");
+        var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        var amount = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+        track.scrollBy({ left: dir * amount, behavior: "smooth" });
+      }
+
+      prevBtn.addEventListener("click", function () { step(-1); });
+      nextBtn.addEventListener("click", function () { step(1); });
+
+      function updateArrows() {
+        var maxScroll = track.scrollWidth - track.clientWidth - 1;
+        prevBtn.disabled = track.scrollLeft <= 0;
+        nextBtn.disabled = track.scrollLeft >= maxScroll;
+      }
+
+      track.addEventListener("scroll", updateArrows);
+      window.addEventListener("resize", updateArrows);
+      updateArrows();
+    });
+  })();
+</script>
 
 </body>
 </html>
